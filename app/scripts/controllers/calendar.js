@@ -10,28 +10,25 @@
 angular.module('sfk9App')
   .controller('CalendarCtrl', function (k9ApiEvents, $scope) {
     $scope.eventSources = [];
-    $scope.showEvents = {};
+    $scope.events = [];
     k9ApiEvents.get().then(function(events) {
-      $scope.events = {};
-      $scope.events['SF K9 Unit Events'] = {
+      $scope.eventsColours = {};
+      var defaultTerm = 'Other Events';
+      $scope.eventsColours['SF K9 Unit Events'] = {
          color: '#C00A09',
          textColor: 'white',
-         events: []
       };
-      $scope.events['Community Events'] = {
+      $scope.eventsColours['Community Events'] = {
          color: '#3d6b99',
          textColor: 'white',
-         events: []
       };
-      $scope.events['Furry Events'] = {
+      $scope.eventsColours['Furry Events'] = {
          color: '#669900',
          textColor: 'white',
-         events: []
       };
-      $scope.events['Other Events'] = {
+      $scope.eventsColours[defaultTerm] = {
          color: 'gray',
          textColor: 'white',
-         events: []
       };
       for (var key in events) {
         var event = events[key];
@@ -40,47 +37,52 @@ angular.module('sfk9App')
             title: event['title']['rendered'],
             start: new Date(event['start'] * 1000),
             end: event['end'] ? new Date(event['end'] * 1000) : null,
+            id: event['id']
           };
-          if (event['terms'].length && $scope.events[event['terms'][0]]) {
-            $scope.events[event['terms'][0]]['events'].push(newEvent);
+          var term = event['terms'].length && $scope.eventsColours[event['terms'][0]] ? event['terms'][0] : defaultTerm;
+          for (var attr in $scope.eventsColours[term]) {
+            newEvent[attr] = $scope.eventsColours[term][attr];
           }
-          else {
-            $scope.events['Other Events']['events'].push(newEvent);
-          }
+          newEvent.k9terms = event['terms'].length ? event['terms'] : [defaultTerm];
+          $scope.events.push(newEvent);
         }
       }
       var watchString = '';
-      for (var k in $scope.events) {
-        watchString += (watchString ? '+' : '') + 'events["' + k + '"].k9noshow';
-        $scope.events[k].k9style = {};
-        if ($scope.events[k].color) {
-          $scope.events[k].k9style['background-color'] = $scope.events[k].color;
+      for (var k in $scope.eventsColours) {
+        watchString += (watchString ? '+' : '') + 'eventsColours["' + k + '"].k9noshow';
+        $scope.eventsColours[k].k9style = {};
+        if ($scope.eventsColours[k].color) {
+          $scope.eventsColours[k].k9style['background-color'] = $scope.eventsColours[k].color;
         }
-        if ($scope.events[k].textColor) {
-          $scope.events[k].k9style['color'] = $scope.events[k].textColor;
+        if ($scope.eventsColours[k].textColor) {
+          $scope.eventsColours[k].k9style['color'] = $scope.eventsColours[k].textColor;
         }
       }
-      $scope.eventSources.push($scope.events['SF K9 Unit Events']);
-      $scope.eventSources.push($scope.events['Community Events']);
-      $scope.eventSources.push($scope.events['Furry Events']);
-      $scope.eventSources.push($scope.events['Other Events']);
+      $scope.eventSources.push($scope.events.slice(0));
 
       /* Watch the no show value and show/hide events. */
       $scope.$watch(watchString, function(newVal, oldVal) {
+        var key;
         if (newVal !== oldVal) {
-          for (var key in $scope.events) {
-            var item = $scope.events[key];
-            if (item.hasOwnProperty('k9noshow')) {
-              var indexOf = $scope.eventSources.indexOf(item);
-              if (item.k9noshow) {
-                if (indexOf > -1) {
-                  $scope.eventSources.splice(indexOf, 1);
-                }
-              }
-              else {
-                if (indexOf === -1) {
-                  $scope.eventSources.push(item);
-                }
+          var show = [];
+          for (key in $scope.eventsColours) {
+            if (!$scope.eventsColours[key].hasOwnProperty('k9noshow') || !$scope.eventsColours[key].k9noshow) {
+              show.push(key);
+            }
+          }
+          // Find events with said terms.
+          if (show.length === 0) {
+            $scope.eventSources[0] = $scope.events;
+            return;
+          }
+          $scope.eventSources.slice(0, 1);
+          $scope.eventSources[0] = [];
+          for (key in $scope.events) {
+            var event = $scope.events[key];
+            for (var tk in event.k9terms) {
+              if (show.indexOf(event.k9terms[tk]) > -1) {
+                $scope.eventSources[0].push(event);
+                break;
               }
             }
           }
