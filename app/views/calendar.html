@@ -1,6 +1,35 @@
 <div >
+  <div ng-if="event">
+    <div class="jumbotron">
+      <h2>{{event.title}}</h2>
+      <div class="row">
+        <div ng-class="event.body ? 'col-md-4' : 'col-md-12'">
+          <ul class="list-group">
+            <li class="list-group-item" ng-if="event.start && moreThen1Day(event)">
+              <h4 class="list-group-item-heading" >Start</h4>
+              <p class="list-group-item-text">{{displayDate(event.start)}}</p>
+            </li>
+            <li class="list-group-item" ng-if="event.end && moreThen1Day(event)">
+              <h4 class="list-group-item-heading">End</h4>
+              <p class="list-group-item-text">{{displayDate(event.end)}}</p>
+            </li>
+            <li class="list-group-item" ng-if="!event.end || !moreThen1Day(event)">
+              <h4 class="list-group-item-heading">Time</h4>
+              <p class="list-group-item-text">{{ displayDate(event.start)}} - {{displayDate(event.end, 'h:mm a')}}</p>
+            </li>
+            <li class="list-group-item">
+              <h4 class="list-group-item-heading" ng-if="event.venue">Venue</h4>
+              <p class="list-group-item-text">{{event.venue}}</p>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-8" ng-if="event.body" ng-bind-html="event.body">
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="btn-group" role="group">
     <button type="button" class="btn btn-default" ng-repeat="(key, value) in eventsColours" ng-style="!value.k9noshow ? value.k9style : null" ng-click="value.k9noshow = !value.k9noshow" >{{key}}</button>
   </div>
-  <div ui-calendar ng-model="eventSources"></div>
+  <div ng-model="eventSources" ui-calendar="uiConfig"></div>
 </div>

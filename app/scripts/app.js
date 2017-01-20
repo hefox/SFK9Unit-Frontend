@@ -31,7 +31,8 @@ angular
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
         controller: 'CalendarCtrl',
-        controllerAs: 'calendar'
+        controllerAs: 'calendar',
+        reloadOnSearch: false
       })
       .when('/:page', {
         templateUrl: 'views/page.html',

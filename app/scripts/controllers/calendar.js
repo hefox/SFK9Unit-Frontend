@@ -8,7 +8,29 @@
  * Controller of the sfk9App
  */
 angular.module('sfk9App')
-  .controller('CalendarCtrl', function (k9ApiEvents, $scope) {
+  .controller('CalendarCtrl', function (k9ApiEvents, $scope, $location) {
+    /* config object */
+    $scope.alertOnEventClick = function(date, jsEvent, view){
+      $location.search('event', date.slug);
+      $scope.event = date;
+    };
+    $scope.uiConfig = {
+      eventClick: $scope.alertOnEventClick,
+      header: {
+          left:   'title listMonth',
+          center: 'month,listWeek,listDay,listMonth,agendaWeek',
+          right:  'today prev,next listMonth'
+      }
+    };
+    $scope.displayDate = function(date, format) {
+      return moment(date).format(format ? format : "MMMM Do YYYY, h:mm a");
+    };
+    /**
+     * returns true if the end is a different day then end.
+     */
+    $scope.moreThen1Day = function(date) {
+      return date.end && !moment(date.start).isSame(date.end, 'day');
+    };
     $scope.eventSources = [];
     $scope.events = [];
     $scope.recurringEvents = [];
@@ -42,6 +64,17 @@ angular.module('sfk9App')
         }
         newEvent.k9terms = event['terms'].length ? event['terms'] : [defaultTerm];
       };
+      var copyCommonValues = function (oldEvent, newEvent) {
+        var keys = ['slug', 'body', 'venue'];
+        if (oldEvent['content'] && oldEvent['content']['rendered']) {
+          newEvent['body'] = oldEvent['content']['rendered'];
+        }
+        for (var k in keys) {
+          if (oldEvent.hasOwnProperty(keys[k])) {
+            newEvent[keys[k]] = oldEvent[keys[k]];
+          }
+        }
+      };
 
       // Iterate over the events.
       for (var key in events) {
@@ -54,6 +87,7 @@ angular.module('sfk9App')
             end: event['end'] ? new Date(event['end'] * 1000) : null
           };
           setTerms(event, newEvent);
+          copyCommonValues(event, newEvent);
           $scope.events.push(newEvent);
         }
         // Recurring event, handle special.
@@ -71,6 +105,7 @@ angular.module('sfk9App')
             datesProcessed: [],
           };
           setTerms(event, newRecurringEvent);
+          copyCommonValues(event, newRecurringEvent);
           $scope.recurringEvents.push(newRecurringEvent);
         }
       }
@@ -138,6 +173,7 @@ angular.module('sfk9App')
                   color: event['color'],
                   textColor: event['textColor'],
                 };
+                copyCommonValues(event, newEvent);
                 // Add event to overall events instead of calling callback
                 // So that we can later filter them.
                 $scope.events.push(newEvent);
@@ -178,21 +214,21 @@ angular.module('sfk9App')
         }
       });
       function redoEvents() {
-        if (!$scope.showTerms || $scope.showTerms.length === 0) {
-          $scope.eventSources[0] = $scope.events;
-          return;
-        }
         $scope.eventSources.slice(0, 1);
         $scope.eventSources[0] = [];
+        var searchObject = $location.search();
         for (key in $scope.events) {
           var event = $scope.events[key];
           addEvent(event);
+          if (searchObject['event'] && searchObject['event'] == event.slug) {
+            $scope.event = event;
+            console.log(event);
+          }
         }
       }
       function addEvent(event) {
         for (var tk in event.k9terms) {
           if (!$scope.showTerms || $scope.showTerms.indexOf(event.k9terms[tk]) > -1) {
-            console.log('added', event);
             $scope.eventSources[0].push(event);
             return;
           }
