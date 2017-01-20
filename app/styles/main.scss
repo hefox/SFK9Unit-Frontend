@@ -1,0 +1,27 @@
+$icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+// bower:scss
+@import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+// endbower
+
+
+body {
+  padding: 0;
+}
+
+#page-content img {
+  margin: 10px;
+}
+
+#page-content img.pull-left {
+  margin-left: 0px;
+}
+
+#page-content em {
+  color: #c00a09;
+  font-weight: bold;
+  font-style: normal;
+}
+
+#page-content .tab-content {
+  padding: 10px;
+}

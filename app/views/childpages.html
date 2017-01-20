@@ -1,0 +1,7 @@
+<div>
+  <uib-tabset active="active" ng-if="pages.length > 0">
+    <uib-tab index="$index" ng-repeat="page in pages" heading="{{page.title.rendered}}">
+      <div ng-bind-html="page.content.rendered"></div>
+    </uib-tab>
+  </uib-tabset>
+</div>
