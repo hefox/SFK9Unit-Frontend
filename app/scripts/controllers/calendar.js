@@ -17,9 +17,9 @@ angular.module('sfk9App')
     $scope.uiConfig = {
       eventClick: $scope.alertOnEventClick,
       header: {
-          left:   'title listMonth',
-          center: 'month,listWeek,listDay,listMonth,agendaWeek',
-          right:  'today prev,next listMonth'
+          left:   'title',
+          center: '',
+          right:  'month,agendaWeek,listMonth today prev,next'
       }
     };
     $scope.displayDate = function(date, format) {
