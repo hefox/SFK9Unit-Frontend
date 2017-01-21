@@ -123,21 +123,28 @@ angular
       restrict: 'E',
       transclude: true,
       scope: {
+        'display': '@',
       },
       controller: function(k9ApiEvents, $scope, $location, $rootScope) {
+        // True till calendar done loading data.
         $scope.calendarLoading = true;
         /* config object */
-        $scope.alertOnEventClick = function(date, jsEvent, view){
+        $scope.alertOnEventClick = function(date){
           $location.search('event', date.slug);
+          if ($location.path() !== '/calendar') {
+            $location.path('/calendar');
+          }
           $rootScope.event = date;
         };
         $scope.uiConfig = {
           eventClick: $scope.alertOnEventClick,
+          height: 'auto',
           header: {
               left:   'title',
               center: '',
-              right:  'month,agendaWeek,listMonth today prev,next'
-          }
+              right:  $scope.display ? '' : 'month,agendaWeek,listMonth today prev,next'
+          },
+          defaultView: $scope.display ? $scope.display : 'month'
         };
         $scope.eventSources = [];
         $scope.events = [];

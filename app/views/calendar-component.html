@@ -1,6 +1,10 @@
 <div>
-  <div class="btn-group" role="group">
+  <div ng-if="calendarLoading"><i class='icon-spinner icon-spin icon-large'></i>  Loading ...</div>
+  <div class="btn-group" role="group" ng-if="!display">
     <button type="button" class="btn btn-default btn-sm" ng-repeat="(key, value) in eventsColours" ng-style="!value.k9noshow ? value.k9style : null" ng-click="value.k9noshow = !value.k9noshow" >{{key}}</button>
+  </div>
+  <div ng-if="display">
+    <a class="btn btn-primary center-block" ng-href="/calendar">View Full Calendar</a>
   </div>
   <div ng-model="eventSources" ui-calendar="uiConfig"></div>
 </div>
