@@ -14,7 +14,7 @@ angular.module('sfk9App')
       $scope.event = $rootScope.event;
     });
     $scope.displayDate = function(date, format) {
-      return moment(date).format(format ? format : "MMMM Do YYYY, h:mm a");
+      return moment(date).format(format ? format : 'MMMM Do YYYY, h:mm a');
     };
     /**
      * returns true if the end is a different day then end.
