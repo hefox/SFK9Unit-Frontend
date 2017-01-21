@@ -10,6 +10,7 @@
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/fullcalendar/dist/fullcalendar.css" />
+    <link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
@@ -23,7 +24,7 @@
 
     <!-- Add your site or application content here -->
     <div class="header">
-      <div class="navbar navbar-default" role="navigation">
+      <div id="main-navbar"class="navbar navbar-default" role="navigation">
         <div class="container">
           <div class="navbar-header">
 
@@ -34,7 +35,7 @@
               <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" href="/">sfk9</a>
+            <a class="navbar-brand" href="/"><img id="main-navbar__logo" src="images/K9-Logo-White.png" alt="San Francisco k9 Unit"/ class="img-responsive" ></a>
           </div>
 
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
@@ -48,6 +49,20 @@
                 <a ng-href="/{{ item.slug }}">{{ item.title }}</a>
               </li>
             </ul>
+            <!-- Begin MailChimp Signup Form -->
+            <form id="mc-embedded-subscribe-form" class="navbar-form navbar-left validate" action="//sfk9unit.us12.list-manage.com/subscribe/post?u=d95a16f47be2acdbbff34e7f8&amp;id=c2216663af" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input id="mce-EMAIL" class="email form-control" name="EMAIL" required="" type="email" value="" placeholder="Enter email, join pack!" />
+            <div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_d95a16f47be2acdbbff34e7f8_c2216663af" type="text" value="" /></div>
+            <input id="mc-embedded-subscribe" class="btn btn-default" name="subscribe" type="submit" value="GO" />
+            </form>
+            <!--End mc_embed_signup-->
+            <ul id="main-navbar__social" class="nav navbar-nav navbar-right ">
+              <li><a href="https://twitter.com/sfk9unit"><i class="fa fa-twitter-square"></i></a></li>
+              <li><a href="https://www.facebook.com/K9UnitSF/"><i class="fa fa-facebook-square"></i></a></li>
+              <li><a href="http://sfk9unit.tumblr.com/"><i class="fa fa-tumblr-square"></i></a></li>
+              <li><a href="http://telegram.me/sfpah"><i class="fa fa-telegram"></i></a></li>
+              <li><a href="mailto:info@sfk9unit.org"><i class="fa fa-envelope"></i></a></li>
+            </ul>
           </div>
         </div>
       </div>
@@ -59,7 +74,6 @@
 
     <div class="footer">
       <div class="container">
-        <p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>
       </div>
     </div>
 
@@ -97,7 +111,6 @@
         <script src="scripts/services/k9api.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/components/calendar.js"></script>
-        <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/calendar.js"></script>
         <script src="scripts/controllers/page.js"></script>
         <!-- endbuild -->
