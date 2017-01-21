@@ -9,9 +9,12 @@
  */
 angular.module('sfk9App')
   // @todo use broadcast or such to pass event.
-  .controller('CalendarCtrl', function ($scope, $rootScope) {
+  .controller('CalendarCtrl', function ($scope, $rootScope, uiCalendarConfig) {
     $rootScope.$watch('event', function() {
       $scope.event = $rootScope.event;
+      if ($scope.event && $scope.event.start && uiCalendarConfig.calendars.calenderPage) {
+        uiCalendarConfig.calendars.calenderPage.fullCalendar('gotoDate', $scope.event.start);
+      }
     });
     $scope.displayDate = function(date, format) {
       return moment(date).format(format ? format : 'MMMM Do YYYY, h:mm a');

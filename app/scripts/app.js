@@ -24,9 +24,14 @@ angular
   .config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl',
-        controllerAs: 'main'
+        templateUrl: 'views/page.html',
+        controller: 'PageCtrl',
+        controllerAs: 'page',
+        resolve: {
+          pageId: function(pageInfo) {
+            return pageInfo.getPageId('home');
+          }
+        }
       })
       .when('/calendar', {
         templateUrl: 'views/calendar.html',
@@ -46,7 +51,7 @@ angular
         }
       })
       .otherwise({
-      redirectTo: '/'
+        redirectTo: '/'
       });
       //$locationProvider.hashPrefix('');
       $locationProvider.html5Mode(true);
@@ -67,8 +72,10 @@ angular
       var q = $q.defer();
       k9ApiMenu.then(function(data) {
         for (var key in data) {
-          if (data[key].slug === rootParam) {
+          // Either matching slug or get first menu item for root.
+          if (data[key].slug === rootParam || rootParam === 'home') {
             q.resolve(data[key].pageId);
+            return;
           }
         }
         q.reject('ID not found.');
@@ -115,6 +122,52 @@ angular
         });
       },
       templateUrl: 'views/childpages.html',
+      replace: true
+    };
+  })
+
+  .directive('sfk9unitpagemodal', function() {
+    return {
+      restrict: 'E',
+      transclude: true,
+      scope: {
+        pageId: '@',
+        linkTitle: '@'
+      },
+      controller: function($scope, $uibModal, k9ApiPage, $q, $rootScope) {
+        $scope.$on('sfk9unitpagemodal-opened', function() {
+          $scope.loading = false;
+        });
+        $scope.opeModal = function() {
+          $scope.loading = true;
+          $uibModal.open({
+            templateUrl: 'views/pagemodal.html',
+            controller: function ($uibModalInstance, pageObject) {
+              var $ctrl = this;
+              $ctrl.pageObject = pageObject;
+              $ctrl.close = function() {
+                 $uibModalInstance.close();
+              };
+              $uibModalInstance.opened.then(function() {
+                $rootScope.$broadcast('sfk9unitpagemodal-opened');
+              });
+
+            },
+            controllerAs: '$ctrl',
+            resolve: {
+              pageObject: function() {
+                var q = $q.defer();
+                k9ApiPage.get($scope.pageId).then(function(page) {
+                  q.resolve(page);
+                  console.log('page', q.promise);
+                });
+                return q.promise;
+              }
+            }
+          });
+        };
+      },
+      template: '<span><button type="button" class="btn bt-default" ng-click="opeModal()">{{linkTitle}} </button> <i class="glyphicon glyphicon-refresh glyphicon-refresh-animate" ng-if="loading"></i></span>',
       replace: true
     };
   });

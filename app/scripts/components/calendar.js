@@ -14,8 +14,9 @@ angular.module('sfk9App')
       transclude: true,
       scope: {
         'display': '@',
+        'calendarId': '@'
       },
-      controller: function(k9ApiEvents, $scope, $location, $rootScope) {
+      controller: function(k9ApiEvents, $scope, $location, $rootScope, uiCalendarConfig) {
         // True till calendar done loading data.
         $scope.calendarLoading = true;
         /* config object */
@@ -70,12 +71,12 @@ angular.module('sfk9App')
             newEvent.k9terms = event['terms'].length ? event['terms'] : [defaultTerm];
           };
           var copyCommonValues = function (oldEvent, newEvent) {
-            var keys = ['slug', 'body', 'venue'];
+            var keys = ['slug', 'body', 'venue', 'contact_name', 'contact_email', 'contact_phone', 'contact_url', 'address', 'allday'];
             if (oldEvent['content'] && oldEvent['content']['rendered']) {
               newEvent['body'] = oldEvent['content']['rendered'];
             }
             for (var k in keys) {
-              if (oldEvent.hasOwnProperty(keys[k])) {
+              if (oldEvent.hasOwnProperty(keys[k]) && !newEvent.hasOwnProperty(keys[k])) {
                 newEvent[keys[k]] = oldEvent[keys[k]];
               }
             }
@@ -170,18 +171,24 @@ angular.module('sfk9App')
                      hour: event['start'].get('hour'),
                      minute: event['start'].get('minute'),
                     });
-                    var newEvent = {
-                      title: event['title'],
-                      start: day.clone().toDate(),
-                      end: event['end'] ? day.add(diff, 'h').clone().toDate() : null,
-                      k9terms: event['k9terms'],
-                      color: event['color'],
-                      textColor: event['textColor'],
-                    };
-                    copyCommonValues(event, newEvent);
-                    // Add event to overall events instead of calling callback
-                    // So that we can later filter them.
-                    $scope.events.push(newEvent);
+                    var dis = day.get('year') + '-' + day.get('month') ;
+                    if (event.datesProcessed.indexOf(dis) === -1) {
+                      event.datesProcessed.push(dis);
+                      var newEvent = {
+                        title: event['title'],
+                        start: day.clone().toDate(),
+                        end: event['end'] ? day.add(diff, 'h').clone().toDate() : null,
+                        k9terms: event['k9terms'],
+                        color: event['color'],
+                        textColor: event['textColor'],
+                        // Make a unique slug that also can be parsed.
+                        slug: event['slug'] + '---' + dis,
+                      };
+                      copyCommonValues(event, newEvent);
+                      // Add event to overall events instead of calling callback
+                      // So that we can later filter them.
+                      $scope.events.push(newEvent);
+                    }
                     // Get next month.
                     day.add(1, 'month').startOf('month').day(dayOfMonth);
                     if (day.date() > 7) {
@@ -227,6 +234,14 @@ angular.module('sfk9App')
               addEvent(event);
               if (searchObject['event'] && searchObject['event'] === event.slug) {
                 $rootScope.event = event;
+              }
+            }
+            // Event not found, do we need to switch month to show it?
+            if (searchObject['event'] && !$rootScope.event &&  uiCalendarConfig.calendars && !$scope.eventSwitchTried) {
+              $scope.eventSwitchTried = true;
+              var dateParts = searchObject['event'].match(/---(\d\d\d\d)-(\d\d?)/);
+              if (dateParts && dateParts[1] && dateParts[2]) {
+                uiCalendarConfig.calendars[$scope.calendarId || 'calendarComp'].fullCalendar('gotoDate', new Date(dateParts[1], dateParts[2]));
               }
             }
             // Indicate the calendar is all done loading.

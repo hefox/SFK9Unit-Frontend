@@ -1,7 +1,7 @@
 <div >
   <div class="row">
     <div class="col-md-6 col-md-push-6" ng-if="event">
-      <div class="jumbotron">
+      <div class="jumbotron calendar-page--event">
         <h2>{{event.title}}</h2>
             <ul class="list-group">
               <li class="list-group-item" ng-if="event.start && moreThen1Day(event)">
@@ -20,13 +20,29 @@
                 <h4 class="list-group-item-heading" >Venue</h4>
                 <p class="list-group-item-text">{{event.venue}}</p>
               </li>
+              <li class="list-group-item" ng-if="event.address.length">
+                <h4 class="list-group-item-heading" >Address</h4>
+                <p class="list-group-item-text">{{event.address}}</p>
+              </li>
+              <li class="list-group-item" ng-if="event.contact_name || event.contact_email">
+                <h4 class="list-group-item-heading" >Contact</h4>
+                <p class="list-group-item-text">
+                  <a ng-if="event.contact_email" ng-href="mailto:{{ event.contact_emai}}">{{event.contact_name || event.contact_email}}</a>
+                  <span ng-if="!event.contact_email && event.contact_name">{{event.contact_name || event.contact_email}}</span>
+                  <span ng-if="event.contact_phone"> {{event.contact_phone}}</span>
+                </p>
+              </li>
+              <li class="list-group-item" ng-if="event.contact_url">
+                <h4 class="list-group-item-heading" >More Information</h4>
+                <p class="list-group-item-text"><a ng-href="{{event.contact_url}}" target="_blank">{{event.contact_url}}</a></p>
+              </li>
             </ul>
           <div ng-if="event.body" ng-bind-html="event.body">
           </div>
       </div>
     </div>
     <div ng-class="event ? 'col-md-6 col-md-pull-6' : 'col-md-12'">
-      <sfk9unitcalendar>
+      <sfk9unitcalendar calendar-id="calenderPage">
     </div>
   </div>
 </div>

@@ -1,0 +1,9 @@
+<div>
+  <div class="modal-header">
+    <button type="button" class="close" aria-label="Close" ng-click="$ctrl.close()"><span aria-hidden="true">&times;</span></button>
+    <h3 class="modal-title" id="modal-title">{{$ctrl.pageObject.title.rendered}}</h3>
+  </div>
+  <div class="modal-body" id="modal-body">
+    <div ng-bind-html="$ctrl.pageObject.content.rendered" class="page-content"></div>
+  </div>
+</div>
