@@ -28,8 +28,8 @@ angular
         controller: 'PageCtrl',
         controllerAs: 'page',
         resolve: {
-          pageId: function(pageInfo) {
-            return pageInfo.getPageId('home');
+          pageObject: function(k9ApiPage) {
+            return k9ApiPage.getBySlug('home');
           }
         }
       })
@@ -44,9 +44,9 @@ angular
         controller: 'PageCtrl',
         controllerAs: 'page',
         resolve: {
-          pageId: function(pageInfo, $route) {
+          pageObject: function(k9ApiPage, $route) {
             var page = $route.current.params.page;
-            return pageInfo.getPageId(page);
+            return k9ApiPage.getBySlug(page);
           }
         }
       })
@@ -60,29 +60,13 @@ angular
   .run(['$rootScope', '$location', 'k9ApiMenu', function($rootScope, $location, k9ApiMenu){
     var path = function() { return $location.path();};
     $rootScope.$watch(path, function(newVal){
-      $rootScope.activetab = newVal;
+      $rootScope.activetab = newVal.substr(1);
+      console.log($rootScope.activetab);
     });
     $rootScope.menu = [];
     k9ApiMenu.then(function(data){
       $rootScope.menu = data;
     });
-  }])
-  .factory('pageInfo', ['k9ApiMenu', '$q', function pageInfo(k9ApiMenu,  $q) {
-    this.getPageId = function(rootParam) {
-      var q = $q.defer();
-      k9ApiMenu.then(function(data) {
-        for (var key in data) {
-          // Either matching slug or get first menu item for root.
-          if (data[key].slug === rootParam || rootParam === 'home') {
-            q.resolve(data[key].pageId);
-            return;
-          }
-        }
-        q.reject('ID not found.');
-      });
-      return q.promise;
-    };
-    return this;
   }])
   // via http://stackoverflow.com/questions/17417607/angular-ng-bind-html-and-directive-within-it
   .directive('bindHtmlCompile', ['$compile', function ($compile) {
@@ -112,10 +96,10 @@ angular
       transclude: true,
       scope: {
       },
-      controller: function($scope, k9ApiPage, pageInfo, $routeParams) {
+      controller: function($scope, k9ApiPage, $routeParams) {
         $scope.pages = [];
-        pageInfo.getPageId($routeParams.page).then(function(pageId) {
-          k9ApiPage.getChildren(pageId).then(function(pages) {
+        k9ApiPage.getBySlug($routeParams.page).then(function(page) {
+          k9ApiPage.getChildren(page.id).then(function(pages) {
             pages.sort(function (a, b) {return a['menu_order'] > b['menu_order'];});
             $scope.pages = pages;
           });
@@ -159,7 +143,6 @@ angular
                 var q = $q.defer();
                 k9ApiPage.get($scope.pageId).then(function(page) {
                   q.resolve(page);
-                  console.log('page', q.promise);
                 });
                 return q.promise;
               }

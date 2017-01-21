@@ -8,9 +8,8 @@
  * Controller of the sfk9App
  */
 angular.module('sfk9App')
-  .controller('PageCtrl', ['pageId', 'k9ApiPage', '$sce', '$scope', function (pageId, k9ApiPage, $sce, $scope) {
+  .controller('PageCtrl', ['pageObject', 'k9ApiPage', '$sce', '$scope', function (pageObject, k9ApiPage, $sce, $scope) {
     $scope.content = '';
-    k9ApiPage.get(pageId).then(function (data) {
-      $scope.content =  $sce.trustAsHtml(data.content.rendered);
-    });
+    $scope.pageObject = pageObject;
+    $scope.content =  $sce.trustAsHtml(pageObject.content.rendered);
   }]);

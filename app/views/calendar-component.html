@@ -5,7 +5,7 @@
     <button type="button" class="btn btn-default btn-sm" ng-repeat="(key, value) in eventsColours" ng-style="!value.k9noshow ? value.k9style : null" ng-click="value.k9noshow = !value.k9noshow" >{{key}}</button>
   </div>
   <div ng-if="display">
-    <a class="btn btn-primary center-block" ng-href="/calendar">View Full Calendar</a>
+    <a class="btn btn-primary center-block" ng-href="calendar">View Full Calendar</a>
   </div>
   <div ng-model="eventSources" ui-calendar="uiConfig" calendar="{{calendarId || 'calendarComp'}}"></div>
   <div class="pull-right">

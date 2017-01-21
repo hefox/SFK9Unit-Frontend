@@ -42,13 +42,46 @@ angular.module('k9Api', [])
     return this.menu.promise;
   }])
   .factory('k9ApiPage', ['$http', 'k9ApiRoot', '$log', '$q', function k9ApiMenu($http, k9ApiRoot, $log, $q) {
+    var that = this;
+    this.pagesBySlug = {};
+    this.pagesById = {};
     this.get = function(pageId) {
       var page = $q.defer();
+      if (that.pagesById[pageId]) {
+        page.resolve(that.pagesById[pageId]);
+        return page.promise;
+      }
       $http({
         method: 'GET',
         url: k9ApiRoot + 'wp/v2/pages/' + pageId
       }).then(function successCallback(response) {
           page.resolve(response.data);
+          that.pagesById[pageId] = response.data;
+        }, function errorCallback() {
+          $log.error('Unable to retrieve page');
+          page.reject('Error retrieving page.');
+      });
+      return page.promise;
+    };
+    this.getBySlug = function(slug) {
+      // temp bypass till we can get home at a home. @fixme
+      slug = slug === 'home' ? 'slider-test' : slug;
+      var page = $q.defer();
+      if (that.pagesBySlug[slug]) {
+        page.resolve(that.pagesBySlug[slug]);
+        return page.promise;
+      }
+      $http({
+        method: 'GET',
+        url: k9ApiRoot + 'wp/v2/pages?slug=' + slug
+      }).then(function successCallback(response) {
+          if (response.data[0]) {
+            page.resolve(response.data[0]);
+            that.pagesBySlug[slug] = response.data[0];
+          }
+          else {
+            page.reject('Unable to find page with slug.');
+          }
         }, function errorCallback() {
           $log.error('Unable to retrieve page');
           page.reject('Error retrieving page.');

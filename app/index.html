@@ -35,7 +35,7 @@
               <span class="icon-bar"></span>
             </button>
 
-            <a class="navbar-brand" href="/"><img id="main-navbar__logo" src="images/K9-Logo-White.png" alt="San Francisco k9 Unit"/ class="img-responsive" ></a>
+            <a class="navbar-brand" href="/"><img id="main-navbar__logo" src="images/K9-Logo-White.png" alt="San Francisco k9 Unit" class="img-responsive" ></a>
           </div>
 
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
@@ -45,8 +45,8 @@
               </li>
             </ul>
             <ul class="nav navbar-nav" ng-if="menu.length > 1">
-              <li ng-repeat="item in menu" ng-class="activetab == item.slug ? active : ''">
-                <a ng-href="/{{ item.slug }}">{{ item.title }}</a>
+              <li ng-repeat="item in menu" ng-class="activetab == item.slug ? 'active' : ''">
+                <a ng-href="{{ item.slug }}">{{ item.title }}</a>
               </li>
             </ul>
             <!-- Begin MailChimp Signup Form -->
