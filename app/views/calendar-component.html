@@ -1,0 +1,6 @@
+<div>
+  <div class="btn-group" role="group">
+    <button type="button" class="btn btn-default btn-sm" ng-repeat="(key, value) in eventsColours" ng-style="!value.k9noshow ? value.k9style : null" ng-click="value.k9noshow = !value.k9noshow" >{{key}}</button>
+  </div>
+  <div ng-model="eventSources" ui-calendar="uiConfig"></div>
+</div>
