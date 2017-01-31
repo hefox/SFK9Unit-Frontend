@@ -20,8 +20,10 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/boots
   padding-top: 15px;
 }
 
-#main-navbar__social li > a {
-  padding: 14px 5px;
+@media (min-width: 768px) {
+  #main-navbar__social li > a {
+    padding: 14px 5px;
+  }
 }
 
 #main-navbar .fa {

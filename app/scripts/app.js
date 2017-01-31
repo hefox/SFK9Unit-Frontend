@@ -39,6 +39,14 @@ angular
         controllerAs: 'calendar',
         reloadOnSearch: false
       })
+      .when('/events/:event', {
+        redirectTo: function (routeParams) {
+          if (routeParams.event === 'calendar') {
+            return 'calendar';
+          }
+          return "/calendar?event=" + routeParams.event;
+        }
+      })
       .when('/:page', {
         templateUrl: 'views/page.html',
         controller: 'PageCtrl',
@@ -61,7 +69,6 @@ angular
     var path = function() { return $location.path();};
     $rootScope.$watch(path, function(newVal){
       $rootScope.activetab = newVal.substr(1);
-      console.log($rootScope.activetab);
     });
     $rootScope.menu = [];
     k9ApiMenu.then(function(data){
