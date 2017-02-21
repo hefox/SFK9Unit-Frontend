@@ -11,8 +11,8 @@
 
 angular.module('k9Api', [])
   // Retrieve the menu.
-  .value('k9ApiRoot', 'http://www.sfk9unit.org/wp-json/')
-  .value('k9ApiSlugRoot', 'http://www.sfk9unit.org')
+  .value('k9ApiRoot', 'http://admin.sfk9unit.org/wp-json/')
+  .value('k9ApiSlugRoot', 'http://admin.sfk9unit.org')
   .factory('k9ApiMenu', ['$http', 'k9ApiRoot', '$log', '$q', 'k9ApiSlugRoot', function k9ApiMenu($http, k9ApiRoot, $log, $q, k9ApiSlugRoot) {
     var that = this;
     this.menu = $q.defer();
