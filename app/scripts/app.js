@@ -44,7 +44,7 @@ angular
           if (routeParams.event === 'calendar') {
             return 'calendar';
           }
-          return "/calendar?event=" + routeParams.event;
+          return '/calendar?event=' + routeParams.event;
         }
       })
       .when('/:page', {
@@ -56,7 +56,8 @@ angular
             var page = $route.current.params.page;
             return k9ApiPage.getBySlug(page);
           }
-        }
+        },
+        reloadOnSearch: false
       })
       .otherwise({
         redirectTo: '/'
@@ -74,6 +75,22 @@ angular
     k9ApiMenu.then(function(data){
       $rootScope.menu = data;
     });
+   $rootScope.$on('$routeChangeStart', function() {
+      $rootScope.loading = true;
+      jQuery('.loading-nav').removeClass('ng-hide');
+
+   });
+
+   $rootScope.$on('$routeChangeSuccess', function() {
+      $rootScope.loading = false;
+      jQuery('.loading-nav').addClass('ng-hide');
+
+   });
+
+   $rootScope.$on('$routeChangeError', function() {
+       $rootScope.loading = false;
+      jQuery('.loading-nav').addClass('ng-hide');
+   });
   }])
   // via http://stackoverflow.com/questions/17417607/angular-ng-bind-html-and-directive-within-it
   .directive('bindHtmlCompile', ['$compile', function ($compile) {
@@ -103,14 +120,33 @@ angular
       transclude: true,
       scope: {
       },
-      controller: function($scope, k9ApiPage, $routeParams) {
+      controller: function($scope, k9ApiPage, $routeParams, $location) {
+        var search = $location.search();
+        $scope.pageId = parseInt(search.id) || undefined;
         $scope.pages = [];
+        $scope.activeTab = 0;
         k9ApiPage.getBySlug($routeParams.page).then(function(page) {
           k9ApiPage.getChildren(page.id).then(function(pages) {
             pages.sort(function (a, b) {return a['menu_order'] > b['menu_order'];});
             $scope.pages = pages;
+            if ($scope.pageId && $scope.pages.length > 0) {
+              for (var k in $scope.pages) {
+                if ($scope.pages[k].id ===  $scope.pageId) {
+                  $scope.activeTab =  parseInt(k);
+                }
+              }
+            }
           });
         });
+        $scope.changeTab = function($event) {
+          if ($event && $event.currentTarget) {
+            var id = jQuery($event.currentTarget).parent().attr('data-id');
+            if (id > 0) {
+              $scope.pageId = id;
+              $location.search('id', id);
+            }
+          }
+        };
       },
       templateUrl: 'views/childpages.html',
       replace: true

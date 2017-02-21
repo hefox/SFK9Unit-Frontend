@@ -39,14 +39,18 @@
           </div>
 
           <div class="collapse navbar-collapse" id="js-navbar-collapse">
-            <ul class="nav navbar-nav" ng-if="menu.length == 0">
-              <li>
-                <a><i class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></i>  Loading ...</a>
-              </li>
-            </ul>
             <ul class="nav navbar-nav" ng-if="menu.length > 1">
               <li ng-repeat="item in menu" ng-class="activetab == item.slug ? 'active' : ''">
                 <a ng-href="{{ item.slug }}">{{ item.title }}</a>
+              </li>
+            </ul>
+            <ul class="nav navbar-nav load-nav-wrapper">
+              <li>
+                <a>
+                  <span class="loading-nav">
+                    <i class='glyphicon glyphicon-refresh glyphicon-refresh-animate'></i><span ng-if="menu.length == 0">  Loading ...</span>
+                  </span>
+                </a>
               </li>
             </ul>
             <!-- Begin MailChimp Signup Form -->

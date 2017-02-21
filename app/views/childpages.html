@@ -1,6 +1,6 @@
 <div>
-  <uib-tabset active="active" ng-if="pages.length > 0">
-    <uib-tab index="$index" ng-repeat="page in pages" heading="{{page.title.rendered}}">
+  <uib-tabset ng-if="pages.length > 0" active="activeTab" >
+    <uib-tab  ng-repeat="page in pages track by $index" index="$index" heading="{{page.title.rendered}}" select="changeTab($event)"data-id="{{page.id}}">
       <div ng-bind-html="page.content.rendered"></div>
     </uib-tab>
   </uib-tabset>
