@@ -169,7 +169,7 @@ angular
           $scope.loading = true;
           $uibModal.open({
             templateUrl: 'views/pagemodal.html',
-            controller: function ($uibModalInstance, pageObject) {
+            controller: ['$uibModalInstance', 'pageObject', function ($uibModalInstance, pageObject) {
               var $ctrl = this;
               $ctrl.pageObject = pageObject;
               $ctrl.close = function() {
@@ -178,8 +178,7 @@ angular
               $uibModalInstance.opened.then(function() {
                 $rootScope.$broadcast('sfk9unitpagemodal-opened');
               });
-
-            },
+            }],
             controllerAs: '$ctrl',
             resolve: {
               pageObject: function() {
